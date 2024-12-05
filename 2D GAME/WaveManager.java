@@ -77,10 +77,10 @@ public class WaveManager {
             zombie.update();
 
             Rectangle playerBounds = new Rectangle(
-                player.worldX + player.solidArea.x - 50,
-                player.worldY + player.solidArea.y - 50,
-                player.solidArea.width + 60,
-                player.solidArea.height + 60
+                player.worldX + player.solidArea.x - 10,
+                player.worldY + player.solidArea.y - 10,
+                player.solidArea.width + 20,
+                player.solidArea.height + 20
             );
 
             Rectangle zombieBounds = new Rectangle(

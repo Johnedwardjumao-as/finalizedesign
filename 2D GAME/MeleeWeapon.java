@@ -27,24 +27,24 @@ public class MeleeWeapon {
     private void loadSwordSprites() {
         try {
             
-            swordUpSprites[0] = ImageIO.read(getClass().getResourceAsStream("/src/swords/sword1.png"));
-            swordUpSprites[1] = ImageIO.read(getClass().getResourceAsStream("/src/swords/sword2.png"));
-            swordUpSprites[2] = ImageIO.read(getClass().getResourceAsStream("/src/swords/sword2.png"));
+            swordUpSprites[0] = ImageIO.read(getClass().getResourceAsStream("/src/swords/topsword1.png"));
+            swordUpSprites[1] = ImageIO.read(getClass().getResourceAsStream("/src/swords/topsword2.png"));
+            swordUpSprites[2] = ImageIO.read(getClass().getResourceAsStream("/src/swords/topsword3.png"));
 
             
-            swordDownSprites[0] = ImageIO.read(getClass().getResourceAsStream("/src/swords/sword1.png"));
-            swordDownSprites[1] = ImageIO.read(getClass().getResourceAsStream("/src/swords/sword2.png"));
-            swordDownSprites[2] = ImageIO.read(getClass().getResourceAsStream("/src/swords/sword2.png"));
+            swordDownSprites[0] = ImageIO.read(getClass().getResourceAsStream("/src/swords/downsword1.png"));
+            swordDownSprites[1] = ImageIO.read(getClass().getResourceAsStream("/src/swords/downsword2.png"));
+            swordDownSprites[2] = ImageIO.read(getClass().getResourceAsStream("/src/swords/downsword3.png"));
 
             
-            swordLeftSprites[0] = ImageIO.read(getClass().getResourceAsStream("/src/swords/sword1.png"));
-            swordLeftSprites[1] = ImageIO.read(getClass().getResourceAsStream("/src/swords/sword2.png"));
-            swordLeftSprites[2] = ImageIO.read(getClass().getResourceAsStream("/src/swords/sword2.png"));
+            swordLeftSprites[0] = ImageIO.read(getClass().getResourceAsStream("/src/swords/leftsword1.png"));
+            swordLeftSprites[1] = ImageIO.read(getClass().getResourceAsStream("/src/swords/leftsword2.png"));
+            swordLeftSprites[2] = ImageIO.read(getClass().getResourceAsStream("/src/swords/leftsword3.png"));
 
             
-            swordRightSprites[0] = ImageIO.read(getClass().getResourceAsStream("/src/swords/sword1.png"));
-            swordRightSprites[1] = ImageIO.read(getClass().getResourceAsStream("/src/swords/sword2.png"));
-            swordRightSprites[2] = ImageIO.read(getClass().getResourceAsStream("/src/swords/sword2.png"));
+            swordRightSprites[0] = ImageIO.read(getClass().getResourceAsStream("/src/swords/rightsword1.png"));
+            swordRightSprites[1] = ImageIO.read(getClass().getResourceAsStream("/src/swords/rightsword2.png"));
+            swordRightSprites[2] = ImageIO.read(getClass().getResourceAsStream("/src/swords/rightsword3.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }

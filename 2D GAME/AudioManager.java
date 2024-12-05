@@ -9,6 +9,7 @@ public class AudioManager {
     private float backgroundMusicVolume = -20.0f; 
     private float zombieSoundVolume = -20.0f;      
     private float attackSoundVolume = 0;
+    private float mainMenuMusicVolume = -10.0f;
     
     public void loadMainMenuMusic() {
         try {
@@ -18,7 +19,7 @@ public class AudioManager {
             backgroundMusic.open(audioStream);
             
             FloatControl gainControl = (FloatControl) backgroundMusic.getControl(FloatControl.Type.MASTER_GAIN);
-            gainControl.setValue(backgroundMusicVolume);
+            gainControl.setValue(mainMenuMusicVolume);
             
             backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);
         } catch (Exception e) {
