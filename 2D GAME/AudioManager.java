@@ -2,14 +2,14 @@ import javax.sound.sampled.*;
 import java.io.IOException;
 
 public class AudioManager {
-    private Clip backgroundMusic;
+    public Clip backgroundMusic;
     private Clip zombieSound;
     private Clip attackSound;
     
-    private float backgroundMusicVolume = -20.0f; 
+    private float backgroundMusicVolume = -0.0f; 
     private float zombieSoundVolume = -20.0f;      
     private float attackSoundVolume = 0;
-    private float mainMenuMusicVolume = -10.0f;
+    private float mainMenuMusicVolume = -0.0f;
     
     public void loadMainMenuMusic() {
         try {

@@ -69,7 +69,6 @@ public class Lighting {
     public void draw(Graphics2D g2) {
         g2.drawImage(darknessFilter, 0, 0, null);
         
-        // Draw zombie count above the lighting
         g2.setColor(Color.WHITE);
         g2.setFont(new Font("Arial", Font.BOLD, 24));
         String zombieCountText = "Zombies: " + zombieCount;

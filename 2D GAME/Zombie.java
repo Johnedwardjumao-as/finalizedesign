@@ -70,26 +70,59 @@ import javax.sound.sampled.*;
        }
    
        public void update() {
-           if (gp.player.worldX > this.worldX) {
-               worldX += speed;
-           } else if (gp.player.worldX < this.worldX) {
-               worldX -= speed;
-           }
-   
-           if (gp.player.worldY > this.worldY) {
-               worldY += speed;
-           } else if (gp.player.worldY < this.worldY) {
-               worldY -= speed;
-           }
-            
-           long currentTime = System.currentTimeMillis();
-           if (currentTime - lastSoundTime >= SOUND_DELAY) {
-               gp.audioManager.playZombieSound();
-               lastSoundTime = currentTime;
+    // Movement towards player
+    if (gp.player.worldX > this.worldX) {
+        worldX += speed;
+    } else if (gp.player.worldX < this.worldX) {
+        worldX -= speed;
+    }
+
+    if (gp.player.worldY > this.worldY) {
+        worldY += speed;
+    } else if (gp.player.worldY < this.worldY) {
+        worldY -= speed;
+    }
+
+    // Check collision with other zombies
+    for (Zombie otherZombie : gp.waveManager.zombies) {
+        if (otherZombie != this) {
+            Rectangle currentZombieBounds = new Rectangle(
+                worldX + solidArea.x, 
+                worldY + solidArea.y, 
+                solidArea.width, 
+                solidArea.height
+            );
+
+            Rectangle otherZombieBounds = new Rectangle(
+                otherZombie.worldX + otherZombie.solidArea.x, 
+                otherZombie.worldY + otherZombie.solidArea.y, 
+                otherZombie.solidArea.width, 
+                otherZombie.solidArea.height
+            );
+
+            // If zombies collide, push each other
+            if (currentZombieBounds.intersects(otherZombieBounds)) {
+                // Determine direction of push
+                int pushX = (worldX < otherZombie.worldX) ? -speed : speed;
+                int pushY = (worldY < otherZombie.worldY) ? -speed : speed;
+
+                // Apply push
+                worldX += pushX;
+                worldY += pushY;
+            }
         }
-           
-           solidArea.x = worldX;
-           solidArea.y = worldY;
-       }
+    }
+    
+    // Play zombie sound
+    long currentTime = System.currentTimeMillis();
+    if (currentTime - lastSoundTime >= SOUND_DELAY) {
+        gp.audioManager.playZombieSound();
+        lastSoundTime = currentTime;
+    }
+    
+    // Update solid area
+    solidArea.x = worldX;
+    solidArea.y = worldY;
+}
    }
    

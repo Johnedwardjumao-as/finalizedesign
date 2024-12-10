@@ -86,14 +86,13 @@ public class MeleeWeapon {
         g2.drawImage(currentSprites[currentSpriteIndex], spriteX, spriteY, gp.tileSize, gp.tileSize, null);
     }
 
-    public void attack(Player player, ArrayList<Zombie> zombies) {
-    
-        gp.audioManager.playAttackSound();
-        
+    public void attack(Player player, ArrayList<Zombie> zombies) {      
         if (!isAttacking) {
             isAttacking = true;
             attackAnimationCounter = 0;
             currentSpriteIndex = 0;
+            
+            gp.audioManager.playAttackSound();
             
         }
 

@@ -17,18 +17,20 @@ public class WaveManager {
     private Player player;
     public ArrayList<Zombie> zombies = new ArrayList<>();
     private int currentWave = 1;
-    private boolean showWaveText = true;
-    private long waveTextTimer = 0;
+    public boolean showWaveText = true;
+    public long waveTextTimer = 0;
     private Clip waveSound;
-    public int zombieCount = 0; 
+    public int zombieCount = 0;
+    public boolean allWavesCompleted = false;
+    private long allWavesCompletedTimer = 0;
 
     public WaveManager(GamePanel gp, Player player) {
         this.gp = gp;
         this.player = player;
         loadWaveSound();
-        spawnWave(); 
+        spawnWave();
     }
-    
+
     private void loadWaveSound() {
         try {
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(
@@ -40,31 +42,31 @@ public class WaveManager {
             e.printStackTrace();
         }
     }
-    
+
     public void spawnWave() {
-    int zombieCount = currentWave * 10; 
+        int zombieCount = currentWave * 10;
 
-    if (waveSound != null) {
-        waveSound.setFramePosition(0);
-        waveSound.start();
+        if (waveSound != null) {
+            waveSound.setFramePosition(0);
+            waveSound.start();
+        }
+
+        zombies.clear();
+        for (int i = 0; i < zombieCount; i++) {
+            Zombie zombie = new Zombie(gp);
+
+            int mapWidth = gp.maxWorldCol * gp.tileSize;
+            int mapHeight = gp.maxWorldRow * gp.tileSize;
+
+            zombie.worldX = (int)(Math.random() * mapWidth);
+            zombie.worldY = (int)(Math.random() * mapHeight);
+
+            zombies.add(zombie);
+        }
+
+        showWaveText = true;
+        waveTextTimer = System.currentTimeMillis();
     }
-
-    zombies.clear();
-    for (int i = 0; i < zombieCount; i++) {
-        Zombie zombie = new Zombie(gp);
-
-        int mapWidth = gp.maxWorldCol * gp.tileSize;
-        int mapHeight = gp.maxWorldRow * gp.tileSize;
-
-        zombie.worldX = (int)(Math.random() * mapWidth);
-        zombie.worldY = (int)(Math.random() * mapHeight);
-
-        zombies.add(zombie);
-    }
-
-    showWaveText = true;
-    waveTextTimer = System.currentTimeMillis();
-}
 
     public void update() {
         if (showWaveText && System.currentTimeMillis() - waveTextTimer > 2000) {
@@ -73,14 +75,14 @@ public class WaveManager {
 
         long currentTime = System.currentTimeMillis();
 
-        for (Zombie zombie : zombies) {
+        for (Zombie zombie : new ArrayList<>(zombies)) {
             zombie.update();
 
             Rectangle playerBounds = new Rectangle(
                 player.worldX + player.solidArea.x - 10,
                 player.worldY + player.solidArea.y - 10,
-                player.solidArea.width + 20,
-                player.solidArea.height + 20
+                player.solidArea.width + 10,
+                player.solidArea.height + 10
             );
 
             Rectangle zombieBounds = new Rectangle(
@@ -92,71 +94,48 @@ public class WaveManager {
 
             if (playerBounds.intersects(zombieBounds)) {
                 if (currentTime - zombie.lastDamageTime >= 0) {
-                    gp.playerStats.decreaseHealth(10);
+                    gp.playerStats.decreaseHealth(0);
                     zombie.lastDamageTime = currentTime;
-                    System.out.println("Zombie collided with player and dealt damage!"); 
                 }
             }
         }
 
-        zombies.removeIf(zombie -> zombie.health <= 0);
+        zombies.removeIf(zombie -> {
+            if (zombie.health <= 0) {
+                int bounty = currentWave == 2 ? 20 : 10;
+                gp.playerStats.addMoney(bounty);
+                return true;
+            }
+            return false;
+        });
 
         zombieCount = zombies.size();
 
         if (zombies.isEmpty()) {
-            currentWave++;
-            if (currentWave <= 5) {
+            if (currentWave < 5) {
+                currentWave++;
                 spawnWave();
-            } else {
-                System.out.println("All waves completed!");
-            }
-        }
-
-        for (int i = 0; i < zombies.size(); i++) {
-            for (int j = i + 1; j < zombies.size(); j++) {
-                Zombie zombie1 = zombies.get(i);
-                Zombie zombie2 = zombies.get(j);
-
-                if (zombie1.solidArea.intersects(zombie2.solidArea)) {
-                    if (zombie1.worldX < zombie2.worldX) {
-                        zombie1.worldX -= zombie1.speed;
-                        zombie2.worldX += zombie2.speed;
-                    } else {
-                        zombie1.worldX += zombie1.speed;
-                        zombie2.worldX -= zombie2.speed;
-                    }
-
-                    if (zombie1.worldY < zombie2.worldY) {
-                        zombie1.worldY -= zombie1.speed;
-                        zombie2.worldY += zombie2.speed;
-                    } else {
-                        zombie1.worldY += zombie1.speed;
-                        zombie2.worldY -= zombie2.speed;
-                    }
-                }
+            } else if (!allWavesCompleted) {
+                allWavesCompleted = true;
+                showWaveText = true;
+                waveTextTimer = System.currentTimeMillis();
+                allWavesCompletedTimer = System.currentTimeMillis();
             }
         }
     }
+    
+    public int getCurrentWave() {
+    return currentWave;
+}
 
     public void draw(Graphics2D g2) {
         for (Zombie zombie : zombies) {
             zombie.draw(g2);
         }
 
-        if (showWaveText) {
-            g2.setColor(Color.WHITE);
-            g2.setFont(new Font("Arial", Font.BOLD, 48));
-            String waveText = "Wave " + currentWave;
-            int textWidth = g2.getFontMetrics().stringWidth(waveText);
-            g2.drawString(waveText, 
-                gp.screenWidth / 2 - textWidth / 2, 
-                gp.screenHeight / 2);
-        }
-
-        
         g2.setColor(Color.WHITE);
         g2.setFont(new Font("Arial", Font.BOLD, 24));
-        g2.drawString("Zombies: " + zombieCount, 
-            gp.screenWidth / 2 - 50, 30);
+        g2.drawString("Money: $" + gp.playerStats.getMoney(), gp.screenWidth - 200, gp.screenHeight - 30);
     }
+
 }

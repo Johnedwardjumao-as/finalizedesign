@@ -12,7 +12,7 @@ public class main{
       window.setResizable(false);
       window.setTitle("The Last Escape");
       
-      GamePanel gamePanel = new GamePanel();
+      GamePanel gamePanel = new GamePanel(0);
       window.add(gamePanel);
       
       window.pack();

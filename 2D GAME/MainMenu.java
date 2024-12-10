@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
@@ -13,6 +12,12 @@ public class MainMenu extends JFrame {
     private int selectedOption = -1;
     private Image backgroundImage;
     private AudioManager audioManager;
+    private int playerMoney = 0;
+
+    public MainMenu(int previousMoney) {
+        this();
+        this.playerMoney = previousMoney;
+    }
 
     public MainMenu() {
         setTitle("The Last Escape");
@@ -82,6 +87,10 @@ public class MainMenu extends JFrame {
         for (int i = 0; i < menuOptions.length; i++) {
             drawMenuOption(g2, menuOptions[i], startY + i * 100, i == selectedOption);
         }
+
+        g2.setFont(new Font("Arial", Font.BOLD, 24));
+        g2.setColor(Color.WHITE);
+        g2.drawString("Money: $" + playerMoney, screenWidth - 200, screenHeight - 50);
     }
 
     private void drawMenuOption(Graphics2D g2, String text, int y, boolean isSelected) {
@@ -99,18 +108,28 @@ public class MainMenu extends JFrame {
     }
 
     private void handleMouseClick(int x, int y) {
-        int startY = screenHeight / 2 + 50;
-        for (int i = 0; i < menuOptions.length; i++) {
-            int optionY = startY + i * 100;
-            if (x > screenWidth / 2 - 150 && x < screenWidth / 2 + 150 && y > optionY - 40 && y < optionY + 20) {
-                switch (menuOptions[i]) {
-                    case "PLAY" -> startGame();
-                    case "LOADOUT" -> openLoadout();
-                    case "EXIT" -> System.exit(0);
-                }
+    int startY = screenHeight / 2 + 50;
+    for (int i = 0; i < menuOptions.length; i++) {
+        int optionY = startY + i * 100;
+        int textWidth = getFontMetrics(new Font("Arial", Font.BOLD, 48)).stringWidth(menuOptions[i]);
+        int textHeight = getFontMetrics(new Font("Arial", Font.BOLD, 48)).getHeight();
+
+        // Dynamically calculate bounds
+        int optionXStart = screenWidth / 2 - textWidth / 2 - 20;
+        int optionXEnd = screenWidth / 2 + textWidth / 2 + 20;
+        int optionYStart = optionY - 40;
+        int optionYEnd = optionY + textHeight / 2;
+
+        if (x > optionXStart && x < optionXEnd && y > optionYStart && y < optionYEnd) {
+            switch (menuOptions[i]) {
+                case "PLAY" -> startGame();
+                case "LOADOUT" -> openLoadout();
+                case "EXIT" -> System.exit(0);
             }
         }
     }
+}
+
 
     private void updateHover(int x, int y) {
         int startY = screenHeight / 2 + 50;
@@ -130,29 +149,31 @@ public class MainMenu extends JFrame {
     }
 
     private void startGame() {
-        audioManager.stopAll();
+    audioManager.stopAll();
 
-        JFrame gameWindow = new JFrame("The Last Escape");
-        gameWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        gameWindow.setResizable(false);
+    JFrame gameWindow = new JFrame("The Last Escape");
+    gameWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    gameWindow.setResizable(false);
 
-        GamePanel gamePanel = new GamePanel();
-        gameWindow.add(gamePanel);
-        gameWindow.pack();
-        gameWindow.setLocationRelativeTo(null);
-        gameWindow.setVisible(true);
+    GamePanel gamePanel = new GamePanel(playerMoney);
+    gameWindow.add(gamePanel);
+    gameWindow.pack();
+    gameWindow.setLocationRelativeTo(null);
+    gameWindow.setVisible(true);
 
-        gamePanel.startGameThread();
-        dispose();
-    }
+    gamePanel.startGameThread();
+    dispose();
+}
+
 
     private void openLoadout() {
-        LoadoutScreen loadoutScreen = new LoadoutScreen(this);
-        loadoutScreen.setVisible(true);
-        dispose();
+       LoadoutScreen loadoutScreen = new LoadoutScreen(this,playerMoney);
+       loadoutScreen.setVisible(true);
+       dispose();
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new MainMenu().setVisible(true));
     }
 }
+   

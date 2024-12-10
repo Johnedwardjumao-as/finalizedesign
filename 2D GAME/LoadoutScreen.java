@@ -11,9 +11,11 @@ public class LoadoutScreen extends JFrame {
     private BufferedImage weapon1;
     private BufferedImage weapon2;
     private BufferedImage background;
+    private int playerMoney;
 
-    public LoadoutScreen(MainMenu mainMenu) {
+    public LoadoutScreen(MainMenu mainMenu, int playerMoney) {
         this.mainMenu = mainMenu;
+        this.playerMoney = playerMoney;
 
         setTitle("Loadout");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -33,25 +35,54 @@ public class LoadoutScreen extends JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                
+
                 if (background != null) {
                     g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
                 }
-                
-                g.setColor(Color.WHITE);
+
+                g.setColor(Color.GREEN);
                 g.setFont(new Font("Arial", Font.BOLD, 48));
                 String title = "Loadout";
                 int textWidth = g.getFontMetrics().stringWidth(title);
                 g.drawString(title, getWidth() / 2 - textWidth / 2, 100);
+
+                // Display current money
+                g.setFont(new Font("Arial", Font.BOLD, 24));
+                String moneyText = "Money: $" + playerMoney;
+                int moneyWidth = g.getFontMetrics().stringWidth(moneyText);
+                g.drawString(moneyText, getWidth() - moneyWidth - 20, 50);
             }
         };
         loadoutPanel.setLayout(null);
 
+        JLabel weaponStatsLabel = new JLabel("", JLabel.CENTER);
+        weaponStatsLabel.setOpaque(true);
+        weaponStatsLabel.setBackground(Color.BLACK);
+        weaponStatsLabel.setForeground(Color.WHITE);
+        weaponStatsLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        weaponStatsLabel.setBounds(0, 0, 200, 50);
+        weaponStatsLabel.setVisible(false);
+        loadoutPanel.add(weaponStatsLabel);
+
         JLabel weapon1Label = new JLabel(new ImageIcon(weapon1.getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
         weapon1Label.setBounds(200, 200, 100, 100);
+        weapon1Label.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                weaponStatsLabel.setText("<html>Spears of Diarmuid Stats:<br>Damage: 20<br>special: Piercing</html>");
+                weaponStatsLabel.setLocation(e.getXOnScreen() - getLocationOnScreen().x + 10,
+                        e.getYOnScreen() - getLocationOnScreen().y + 10);
+                weaponStatsLabel.setVisible(true);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                weaponStatsLabel.setVisible(false);
+            }
+        });
         loadoutPanel.add(weapon1Label);
 
-        JLabel equipWeapon1Label = new JLabel("Equip", JLabel.CENTER);
+        JLabel equipWeapon1Label = new JLabel("500000", JLabel.CENTER);
         equipWeapon1Label.setForeground(Color.GREEN);
         equipWeapon1Label.setFont(new Font("Arial", Font.BOLD, 18));
         equipWeapon1Label.setBounds(200, 310, 100, 30);
@@ -66,9 +97,23 @@ public class LoadoutScreen extends JFrame {
 
         JLabel weapon2Label = new JLabel(new ImageIcon(weapon2.getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
         weapon2Label.setBounds(500, 200, 100, 100);
+        weapon2Label.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                weaponStatsLabel.setText("<html> Skullsplitter  Stats:<br>Damage: 30 <br>special: Cleave</html>");
+                weaponStatsLabel.setLocation(e.getXOnScreen() - getLocationOnScreen().x + 10,
+                        e.getYOnScreen() - getLocationOnScreen().y + 10);
+                weaponStatsLabel.setVisible(true);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                weaponStatsLabel.setVisible(false);
+            }
+        });
         loadoutPanel.add(weapon2Label);
 
-        JLabel equipWeapon2Label = new JLabel("Equip", JLabel.CENTER);
+        JLabel equipWeapon2Label = new JLabel("100000", JLabel.CENTER);
         equipWeapon2Label.setForeground(Color.GREEN);
         equipWeapon2Label.setFont(new Font("Arial", Font.BOLD, 18));
         equipWeapon2Label.setBounds(500, 310, 100, 30);
@@ -108,7 +153,7 @@ public class LoadoutScreen extends JFrame {
         panel.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
         panel.setLayout(new BorderLayout());
 
-        JLabel message = new JLabel("Weapon not available.", JLabel.CENTER);
+        JLabel message = new JLabel("Insufficient money.", JLabel.CENTER);
         message.setForeground(Color.WHITE);
         message.setFont(new Font("Arial", Font.BOLD, 16));
         message.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
